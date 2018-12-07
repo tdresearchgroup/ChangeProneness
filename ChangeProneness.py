@@ -44,6 +44,8 @@ def folder_compare(foler1, folder2, filetype):
 	return ratios, change
 
 def version_compare(old_dir, new_dir, write_to = None, filetype = "java"):
+	old_dir = old_dir.replace('\\',"/")
+	new_dir = new_dir.replace('\\',"/")
 	output = []
 	diff_average = []
 	old_files = {}
@@ -71,13 +73,13 @@ def version_compare(old_dir, new_dir, write_to = None, filetype = "java"):
 							diff_average.append(diff)
 							output.append([old_file, new_file, "m", str(diff)+'%'])
 						else:
-							output.append([" ", new_file, "+"])
+							output.append([" ", new_file, "+", ""])
 							additions += 1
 					else:
 						old_files[folder_file] = full_path
 	for i in old_files.keys():
 		file = old_files[i] +"/"+ i.split("/")[-1]
-		output.append( [file, " ", "-"] )
+		output.append( [file, " ", "-", ""] )
 		subtractions += 1
 
 	diff_average = sum(diff_average)/len(diff_average)
@@ -99,16 +101,33 @@ def system_compare(directory, write_to, filetype = "java"):
 	directory = directory.replace("\\", "/")
 	if not directory.endswith("/"):
 		directory += "/"
-	output = []
-	folders = sorted( glob(directory + "*/"), key=str.lower)
+	left_output = []
+	folders = glob(directory + "*/")
+	folders.sort(key= lambda name: int(''.join([i for i in name if i.isdigit()])))
+	print folders
+
 	for i in range(len(folders)-1):
-		output.append( version_compare(folders[i], folders[i+1]) )
+		print(i)
+		if len(left_output) == 0:
+			left_output = ( version_compare(folders[i], folders[i+1]) )
+		else:
+			right_output = ( version_compare(folders[i], folders[i+1]) )
+			left_len = len(left_output)
+			right_len = len(right_output)
+			blank = ['','','','','']
+			for j in range(max(left_len, right_len)):
+				if j >= right_len:
+					left_output[j] += blank
+				elif j >= left_len:
+					left_output.append(blank + right_output[j])
+				else:
+					left_output[j] += [''] + right_output[j]
 
 	if not write_to.endswith(".csv"):
 		write_to += ".csv"
 	with open(write_to, "w") as f:
-		for comparison in output:
-			f.write( ",".join( comparison[0] ))
+		for line in left_output:
+			f.write( ",".join(line) + '\n' )
 
 
 
@@ -119,15 +138,6 @@ if __name__ == '__main__':
 	# ratios, change = folder_compare(folder1, folder2, "java")
 
 	#version_compare("../azureus/Azureus_2.2.0.2_source", "../azureus/Azureus_2.3.0.2_source", "AZ_compare")
-	system_compare("../azureus", "Azureus_sys_compare")
-
-	# start with change between two versions, then expand to several versions
-	# export to CSV
-	# set change threshold, more than 20% is significant?
-	'''
-	2.3 -> 2.4
-	a.java m .55
-	b.java + X
-	c.java - X
-	'''
+	#system_compare("../azureus", "Azureus_sys_compare")
+	system_compare("../hive", "Hive_sys_compare")
 		
