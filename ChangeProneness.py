@@ -18,10 +18,10 @@ def folder_compare(foler1, folder2, filetype):
 	#ouput which files are in one but not the other
 	
 	if not os.path.isdir(folder1):
-		print folder1 + " doesn't exist"
+		print (folder1 + " doesn't exist")
 		return
 	if not os.path.isdir(folder2):
-		print folder2 + " doesn't exist"
+		print (folder2 + " doesn't exist")
 		return
 	aFiles = glob(folder1 + "/*." + filetype)
 	bFiles = glob(folder2 + "/*." + filetype)
@@ -104,7 +104,7 @@ def system_compare(directory, write_to, filetype = "java"):
 	left_output = []
 	folders = glob(directory + "*/")
 	folders.sort(key= lambda name: int(''.join([i for i in name if i.isdigit()])))
-	print folders
+	print (folders)
 
 	for i in range(len(folders)-1):
 		print(i)
@@ -132,12 +132,10 @@ def system_compare(directory, write_to, filetype = "java"):
 
 
 if __name__ == '__main__':
-	#print calc_diff("../StrategyPanel_1.java", "../StrategyPanel_5.java")
-	#folder1 = "../azureus/Azureus_2.2.0.2_source/org/gudy/azureus2/platform"
-	#folder2 = "../azureus/Azureus_2.3.0.2_source/org/gudy/azureus2/platform"
-	# ratios, change = folder_compare(folder1, folder2, "java")
+	#print calc_diff("version1.java", "version2.java")
+	folder1 = "/Users/zcodabux/Desktop/Comment-Tracker-master/hive-0.11.0"
+	folder2 = "/Users/zcodabux/Desktop/Comment-Tracker-master/hive-0.12.0"
+	version_compare(folder1, folder2, "version_compare", "java")
 
-	#version_compare("../azureus/Azureus_2.2.0.2_source", "../azureus/Azureus_2.3.0.2_source", "AZ_compare")
 	#system_compare("../azureus", "Azureus_sys_compare")
-	system_compare("../hive", "Hive_sys_compare")
 		
